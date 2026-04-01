@@ -1,54 +1,23 @@
-# System Log Analysis Pipeline
+﻿# Task 2 - Local Office Communication System
 
-**Author:** Thibaud Martinez
-**Project:** Assignment I - Local Data Analysis of System Logs
-**Branch:** `task1-thibaudmartinez42-alt`
+## Objectif
+Mise en place d'une infrastructure de communication locale incluant un serveur mail, un partage de fichiers par rôles et une imprimante réseau[cite: 4, 6].
 
----
+## Réalisations Techniques
+### 1. Serveur Mail (hMailServer) 
+- Domaine local : `office.local`.
+- 5 Comptes utilisateurs : direction, h, 	ech, compta, stagiaire[cite: 8].
+- Alias : contact@office.local redirige vers h@office.local[cite: 10].
+- Liste de diffusion : ll@office.local inclut tous les membres[cite: 10].
+- Limite de taille : 10 Mo par message[cite: 10].
 
-## 1. Project Overview
+### 2. Partage de Fichiers (SMB) [cite: 11]
+- **Public** : Accès total pour "Tout le monde".
+- **Direction_Only** : Restreint au groupe local Direction_Group[cite: 14].
+- **RH_Only** : Restreint au groupe local RH_Group[cite: 14].
 
-This repository contains an automated workflow designed to extract, process, and visualize local system logs in a Windows environment. The pipeline specifically targets the Windows Event Viewer to identify system errors and monitor login attempts, outputting the results into an interactive HTML report.
+### 3. Imprimante Partagée [cite: 12]
+- Imprimante virtuelle Imprimante_Bureau partagée sur le réseau local via le pilote Generic Text[cite: 13].
 
-## 2. Technical Architecture
-
-The pipeline is structured into four distinct phases to ensure modularity and performance:
-
-### 2.1. Data Extraction
-- **Component:** `log_analyzer.py` (Subprocess & PowerShell)
-- **Target:** Windows Event Viewer (`System` and `Security` logs).
-- **Extraction Scope:** Captures the most recent 4,000 events to ensure optimal performance without overloading system memory. It specifically filters for Event IDs `4624` (Successful Logon) and `4625` (Failed Logon), alongside system warnings and errors.
-- **Output:** Raw data is temporarily dumped into `windows_logs.csv` using UTF-8 encoding.
-
-### 2.2. Data Processing
-- **Component:** `pandas`
-- **Operations:**
-  - Parses raw timestamps into structured `datetime` objects for chronological sorting.
-  - Cleans missing values and standardizes event level names.
-  - Segregates data into specific subsets for error tracking and login monitoring.
-
-### 2.3. Data Visualization
-- **Component:** `matplotlib`
-- **Outputs:**
-  - **Error Frequency (Bar Chart):** Quantifies occurrences of 'Error', 'Warning', and 'Critical' events.
-  - **Login Activity (Time Series):** Maps login attempts over time aggregated by hour.
-  - **Event Distribution (Pie Chart):** Illustrates the proportion of different event types across the system.
-
-### 2.4. Automation & Reporting
-- **Reporting:** Compiles the generated PNG visualizations into a responsive `report.html` dashboard.
-- **Automation:** Includes a PowerShell script (`setup_automation.ps1`) to deploy a Windows Scheduled Task, enabling periodic execution of the pipeline.
-
----
-
-## 3. Installation and Prerequisites
-
-This script must be executed on a Windows operating system.
-
-**Required Dependencies:**
-- Python 3.x
-- `pandas`
-- `matplotlib`
-
-**Installation Command:**
-```bash
-pip install pandas matplotlib
+## Validation
+Les tests d'envoi SMTP ont été validés via PowerShell (Send-MailMessage) et les logs hMailServer confirment la mise en file d'attente des messages[cite: 9, 16].
