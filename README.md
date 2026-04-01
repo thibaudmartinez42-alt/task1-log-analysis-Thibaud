@@ -1,23 +1,36 @@
-﻿# Task 2 - Local Office Communication System
+﻿# Local Office Communication & Resource Sharing System
 
-## Objectif
-Mise en place d'une infrastructure de communication locale incluant un serveur mail, un partage de fichiers par rôles et une imprimante réseau[cite: 4, 6].
+## 1. Project Overview
+This project implements a secure local infrastructure for the agency, focusing on internal messaging and role-based file access[cite: 4]. The environment is built on Windows 11 using hMailServer for SMTP/IMAP services and Native Windows SMB for file sharing[cite: 7, 11].
 
-## Réalisations Techniques
-### 1. Serveur Mail (hMailServer) 
-- Domaine local : `office.local`.
-- 5 Comptes utilisateurs : direction, h, 	ech, compta, stagiaire[cite: 8].
-- Alias : contact@office.local redirige vers h@office.local[cite: 10].
-- Liste de diffusion : ll@office.local inclut tous les membres[cite: 10].
-- Limite de taille : 10 Mo par message[cite: 10].
+## 2. Mail System Architecture (hMailServer)
+The system uses the local domain `office.local`[cite: 8].
 
-### 2. Partage de Fichiers (SMB) [cite: 11]
-- **Public** : Accès total pour "Tout le monde".
-- **Direction_Only** : Restreint au groupe local Direction_Group[cite: 14].
-- **RH_Only** : Restreint au groupe local RH_Group[cite: 14].
+### Accounts & Distribution
+- **Users**: 5 dedicated accounts (direction, rh, tech, compta, stagiaire)[cite: 8].
+- **Global Mailing List**: `all@office.local` (broadcasts to all staff members)[cite: 10].
+- **Alias/Forwarder**: `contact@office.local` automatically forwards to the HR department (rh@)[cite: 10].
+- **Policy**: Attachment size is strictly limited to **10 MB** to preserve local storage[cite: 10].
 
-### 3. Imprimante Partagée [cite: 12]
-- Imprimante virtuelle Imprimante_Bureau partagée sur le réseau local via le pilote Generic Text[cite: 13].
+## 3. File Sharing & Permissions (RBAC)
+Resources are shared via SMB with Role-Based Access Control (RBAC).
 
-## Validation
-Les tests d'envoi SMTP ont été validés via PowerShell (Send-MailMessage) et les logs hMailServer confirment la mise en file d'attente des messages[cite: 9, 16].
+| Folder | Access Level | Target Group |
+| :--- | :--- | :--- |
+| **Public** | Read/Write | All Staff (Everyone) |
+| **Direction_Only** | Restricted | Direction Group only |
+| **RH_Only** | Restricted | HR Group only |
+
+## 4. Shared Printing
+A central printer named `Imprimante_Bureau` is shared on the network[cite: 12]. It uses a Generic Text driver for cross-platform compatibility[cite: 13].
+
+## 5. Usage Instructions
+### Accessing Files
+1. Open File Explorer.
+2. Enter \\localhost in the address bar.
+3. Authenticate with your role credentials (e.g., username: h, password: P@ssw0rd123!).
+
+### Mail Client Setup (Thunderbird)
+- **Protocol**: IMAP (Port 143) / SMTP (Port 25)[cite: 9].
+- **Server**: 127.0.0.1[cite: 9].
+- **Authentication**: Normal password[cite: 9].
